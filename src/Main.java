@@ -1,69 +1,61 @@
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Main{
 	public static void main(String[] args) throws Exception{
 		ArrayList<int[]> list = new ArrayList<>();
 		ArrayList<int[]> task2 = new ArrayList<>();
 		ArrayList<int[]> task3 = new ArrayList<>();
-		int r = 3;//степень порождающего многочлена
-		int k = 4;//длина сообщения
-		int d = 3;
+		Scanner in = new Scanner(System.in);
+		System.out.print("Input r: ");
+		int r = in.nextInt();//степень порождающего многочлена
+		System.out.print("Input k: ");
+		int k = in.nextInt();//длина сообщения
+		System.out.print("Input d: ");
+		int d = in.nextInt();
 		double p = 0.2;//значение ошибки для вычисления верхней границы ошибки
 		double []p_bit = {0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1};//значения ошибки на бит для вычисления точного значения ошибки
 		double []pe = new double[p_bit.length];
 		double []p_p = new double[p_bit.length];
+		int []g = new int[r + 1];
+		System.out.print("Input g: ");
+		for(int i = 0; i < k; i++){
+			g[i] = in.nextInt();
+			if(g[i] > 1) g[i] %= 2;
+			if(g[i] < 0 && g[i] > -2) g[i] *= -1;
+			if(g[i] < -2){
+				g[i] *= -1;
+				g[i] %= 2;
+			}
+		}
 		int []m = new int[k];
-		m[0] = 1;
-		m[1] = 1;
-		m[2] = 0;
-		m[3] = 0;
+		System.out.print("Input m: ");
+		for(int i = 0; i < k; i++){
+			m[i] = in.nextInt();
+			if(m[i] > 1) m[i] %= 2;
+			if(m[i] < 0 && m[i] > -2) m[i] *= -1;
+			if(m[i] < -2){
+				m[i] *= -1;
+				m[i] %= 2;
+			}
+		}
 		Cod_Dec cod_dec = new Cod_Dec(r, k, d);
-		cod_dec.set_g(0, 1);
-		cod_dec.set_g(1, 1);
-		cod_dec.set_g(2, 0);
-		cod_dec.set_g(3, 1);
-		cod_dec.print_g();
+		cod_dec.create_g(g);
 		cod_dec.create_m(m);
 		cod_dec.create_c();
 		cod_dec.create_a();
 		cod_dec.create_e();
 		cod_dec.create_b();
 		cod_dec.sindrom();
-		Cod_Dec []c = new Cod_Dec[16];
-		for(int i = 1; i < 16; i++){//составление всех возможных сообщений для длины k
+		int len = (int)Math.pow(2, k);
+		Cod_Dec []c = new Cod_Dec[len];
+		for(int i = 1; i < len; i++){//составление всех возможных сообщений для длины k
 			c[i] = new Cod_Dec(r, k, d);
 			int []m1 = new int[k];
 			Integer number = new Integer(i);
 			String num = Integer.toBinaryString(number);
-			if(i < 2){
-				m1[0] = 0;
-				m1[1] = 0;
-				m1[2] = 0;
-				m1[3] = (int)num.charAt(0) % 2;
-			}
-			if(i >= 2 && i < 4){
-				m1[0] = 0;
-				m1[1] = 0;
-				m1[2] = (int)num.charAt(1) % 2;
-				m1[3] = (int)num.charAt(0) % 2;
-			}
-			if(i >= 4 && i < 8){
-				m1[1] = (int)num.charAt(2) % 2;
-				m1[2] = (int)num.charAt(1) % 2;
-				m1[3] = (int)num.charAt(0) % 2;
-				m1[0] = 0;
-			}
-			if(i >= 8 && i < 16){
-				m1[0] = (int)num.charAt(3) % 2;
-				m1[1] = (int)num.charAt(2) % 2;
-				m1[2] = (int)num.charAt(1) % 2;
-				m1[3] = (int)num.charAt(0) % 2;
-			}
-			c[i].set_g(0, 1);
-			c[i].set_g(1, 1);
-			c[i].set_g(2, 0);
-			c[i].set_g(3, 1);
-			c[i].print_g();
+			m1 = toBinary(k, num, i);
+			c[i].create_g(g);
 			c[i].create_m(m1);
 			c[i].create_c();
 			c[i].create_a();
@@ -82,32 +74,15 @@ public class Main{
 		cod_dec.print_to_csv(pe, p_p, "pe", "p_p", "task1.csv");
 		//доп.задание l < k
 		int l = k - 1;
-		Cod_Dec []q = new Cod_Dec[8];
-		for(int i = 1; i < 8; i++){
+		len = (int)Math.pow(2, l);
+		Cod_Dec []q = new Cod_Dec[len];
+		for(int i = 1; i < len; i++){
 			q[i] = new Cod_Dec(r, l, d);
 			int []m1 = new int[l];
 			Integer number = new Integer(i);
 			String num = Integer.toBinaryString(number);
-			if(i < 2){
-				m1[0] = 0;
-				m1[1] = 0;
-				m1[2] = (int)num.charAt(0) % 2;
-			}
-			if(i >= 2 && i < 4){
-				m1[0] = 0;
-				m1[1] = (int)num.charAt(1) % 2;
-				m1[2] = (int)num.charAt(0) % 2;
-			}
-			if(i >= 4 && i < 8){
-				m1[0] = (int)num.charAt(2) % 2;
-				m1[1] = (int)num.charAt(1) % 2;
-				m1[2] = (int)num.charAt(0) % 2;
-			}
-			q[i].set_g(0, 1);
-			q[i].set_g(1, 1);
-			q[i].set_g(2, 0);
-			q[i].set_g(3, 1);
-			q[i].print_g();
+			m1 = toBinary(l, num, i);
+			q[i].create_g(g);
 			q[i].create_m(m1);
 			q[i].create_c();
 			q[i].create_a();
@@ -122,53 +97,16 @@ public class Main{
 		}
 		cod_dec.print_to_csv(pe, p_p, "pe", "p_p", "task2.csv");
 		//доп.задание l > k
-		l = k + 1;
-		Cod_Dec []t = new Cod_Dec[32];
-		for(int i = 1; i < 32; i++){
+		l = k + 4;
+		len = (int)Math.pow(2, l);
+		Cod_Dec []t = new Cod_Dec[len];
+		for(int i = 1; i < len; i++){
 			t[i] = new Cod_Dec(r, l, d);
 			int []m1 = new int[l];
 			Integer number = new Integer(i);
 			String num = Integer.toBinaryString(number);
-			if(i < 2){
-				m1[0] = 0;
-				m1[1] = 0;
-				m1[2] = 0;
-				m1[3] = 0;
-				m1[4] = (int)num.charAt(0) % 2;
-			}
-			if(i >= 2 && i < 4){
-				m1[0] = 0;
-				m1[1] = 0;
-				m1[2] = 0;
-				m1[3] = (int)num.charAt(1) % 2;
-				m1[4] = (int)num.charAt(0) % 2;
-			}
-			if(i >= 4 && i < 8){
-				m1[0] = 0;
-				m1[1] = 0;
-				m1[2] = (int)num.charAt(2) % 2;
-				m1[3] = (int)num.charAt(1) % 2;
-				m1[4] = (int)num.charAt(0) % 2;
-			}
-			if(i >= 8 && i < 16){
-				m1[0] = 0;
-				m1[1] = (int)num.charAt(3) % 2;
-				m1[2] = (int)num.charAt(2) % 2;
-				m1[3] = (int)num.charAt(1) % 2;
-				m1[4] = (int)num.charAt(0) % 2;
-			}
-			if(i >= 16 && i < 32){
-				m1[0] = (int)num.charAt(4) % 2;
-				m1[1] = (int)num.charAt(3) % 2;
-				m1[2] = (int)num.charAt(2) % 2;
-				m1[3] = (int)num.charAt(1) % 2;
-				m1[4] = (int)num.charAt(0) % 2;
-			}
-			t[i].set_g(0, 1);
-			t[i].set_g(1, 1);
-			t[i].set_g(2, 0);
-			t[i].set_g(3, 1);
-			t[i].print_g();
+			m1 = toBinary(l, num, i);
+			t[i].create_g(g);
 			t[i].create_m(m1);
 			t[i].create_c();
 			t[i].create_a();
@@ -193,5 +131,62 @@ public class Main{
 			}
 			System.out.println(")");
 		}
+	}
+
+	public static int[] toBinary(int size, String num, int i){//перевод числа в 2 систему счисления
+		int []m1 = new int[size];
+		if(i < 2){
+			m1[size - 1] = (int)num.charAt(0) % 2;//charAt - метод, который возвращает символ по индексу из строки; если 0 преобразовать к int получится число 48, 1 - 49; поэтому я беру число по модулю 2
+		}
+		if(i >= 2 && i < 4){
+			m1[size - 2] = (int)num.charAt(0) % 2;
+			m1[size - 1] = (int)num.charAt(1) % 2;
+		}
+		if(i >= 4 && i < 8){
+			m1[size - 3] = (int)num.charAt(0) % 2;
+			m1[size - 2] = (int)num.charAt(1) % 2;
+			m1[size - 1] = (int)num.charAt(2) % 2;
+		}
+		if(i >= 8 && i < 16){
+			m1[size - 4] = (int)num.charAt(0) % 2;
+			m1[size - 3] = (int)num.charAt(1) % 2;
+			m1[size - 2] = (int)num.charAt(2) % 2;
+			m1[size - 1] = (int)num.charAt(3) % 2;
+		}
+		if(i >= 16 && i < 32){
+			m1[size - 5] = (int)num.charAt(0) % 2;
+			m1[size - 4] = (int)num.charAt(1) % 2;
+			m1[size - 3] = (int)num.charAt(2) % 2;
+			m1[size - 2] = (int)num.charAt(3) % 2;
+			m1[size - 1] = (int)num.charAt(4) % 2;
+		}
+		if(i >= 32 && i < 64){
+			m1[size - 6] = (int)num.charAt(0) % 2;
+			m1[size - 5] = (int)num.charAt(1) % 2;
+			m1[size - 4] = (int)num.charAt(2) % 2;
+			m1[size - 3] = (int)num.charAt(3) % 2;
+			m1[size - 2] = (int)num.charAt(4) % 2;
+			m1[size - 1] = (int)num.charAt(5) % 2;
+		}
+		if(i >= 64 && i < 128){
+			m1[size - 7] = (int)num.charAt(0) % 2;
+			m1[size - 6] = (int)num.charAt(1) % 2;
+			m1[size - 5] = (int)num.charAt(2) % 2;
+			m1[size - 4] = (int)num.charAt(3) % 2;
+			m1[size - 3] = (int)num.charAt(4) % 2;
+			m1[size - 2] = (int)num.charAt(5) % 2;
+			m1[size - 1] = (int)num.charAt(6) % 2;
+		}
+		if(i >= 128 && i < 256){
+			m1[size - 8] = (int)num.charAt(0) % 2;
+			m1[size - 7] = (int)num.charAt(1) % 2;
+			m1[size - 6] = (int)num.charAt(2) % 2;
+			m1[size - 5] = (int)num.charAt(3) % 2;
+			m1[size - 4] = (int)num.charAt(4) % 2;
+			m1[size - 3] = (int)num.charAt(5) % 2;
+			m1[size - 2] = (int)num.charAt(6) % 2;
+			m1[size - 1] = (int)num.charAt(7) % 2;
+		}
+		return m1;
 	}
 }

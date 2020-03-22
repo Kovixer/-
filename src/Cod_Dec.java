@@ -30,15 +30,17 @@ public class Cod_Dec{
 		this.d = d;
 	}
 
-	public void set_g(int index, int value){//задает порождающий многочлен
-		g[index] = value;
+	public void create_g(int []array){//задает порождающий многочлен(на вход принимается индекс и значние, которое записывается по этому индексу)
+		if(array.length == g.length){
+			for(int i = 0; i < array.length; i++){
+				g[i] = array[i];
+			}
+			print_array(g, "g");//вызов метода, который выводит многочлен на экран
+		}
+		else System.out.println("The dimensions don't match");
 	}
 
-	public void print_g(){//вывод порождающего многочлена на экран
-		print_array(g, "g");
-	}
-
-	public void create_m(int []m1){//создание сообщения
+	public void create_m(int []m1){//создание сообщения(принимается массив который записывается в  массив m)
 		if(m1.length == k){
 			for(int i = 0; i < k; i++){
 				this.m[i] = m1[i];
@@ -56,9 +58,9 @@ public class Cod_Dec{
 		for(int i = 1; i < x.length; i++){
 			x[i] = 0;
 		}
-		int []tmp = multiply(m, x);
+		int []tmp = multiply(m, x);//метод для перемножения многочленов
 		//print_array(tmp, "m(x) * x^r");
-		c = mod(tmp);
+		c = mod(tmp);//метод деления многочленов
 		//print_array(c, "c");
 	}
 
@@ -79,20 +81,20 @@ public class Cod_Dec{
 		int []tmp1 = new int[1];
 		tmp1[0] = 0;
 		while(tmp_deg >= r){
-			int deg = tmp_deg - r;
+			int deg = tmp_deg - r;//понижение степени многочлена
 			int []x = new int[deg + 1];
 			x[0] = 1;
 			//print_array(x, "x^");
-			int []t = multiply(x, g);
+			int []t = multiply(x, g);//перемножение многочленов
 			//print_array(t, "x^ * g(x)");
-			tmp = minus(tmp, t);
+			tmp = minus(tmp, t);//метод вычитания многочленов
 			//print_array(tmp, "(m(x) * x^) - (x^ * g(x))");
-			zero = count_zero(tmp);
+			zero = count_zero(tmp);//подсчет количества нулей в векторе
 			if(zero == tmp.length){//если многочлен стал нулевым то выходим из деления
 				return tmp1;
 			}
 			else{
-				tmp = cut0(tmp);
+				tmp = cut0(tmp);//убираем все нули, которые стоят в начале
 				//print_array(tmp, "(m(x) * x^) - (x^ * g(x))_cut");
 				tmp_deg = tmp.length - 1;
 			}
@@ -137,16 +139,16 @@ public class Cod_Dec{
 		int i = 0;
 		int j = 0;
 		int tmp = a.length - c.length - m.length;
-		while(i < m.length){
+		while(i < m.length){//в начало копируется вектор m
 			a[i] = m[i];
 			i++;
 		}
-		while(tmp > 0){
+		while(tmp > 0){//если длина вектора а больше суммы с и m заполняем нулями
 			a[i] = 0;
 			i++;
 			tmp--;
 		}
-		while(j < c.length){
+		while(j < c.length){//в конец копируется вектор с
 			a[i] = c[j];
 			i++;
 			j++;
@@ -161,18 +163,18 @@ public class Cod_Dec{
 	public void create_e(){//создание вектора ошибок
 		Scanner s = new Scanner(System.in);
 		System.out.print("Input e: ");
-		for(int i = 0; i < e.length; i++){
+		for(int i = 0; i < e.length; i++){//ввод вектора ошибок с клавиатуры
 			e[i] = s.nextInt();
 			e[i] %= 2;
 		}
-		print_array(e, "e");
+		print_array(e, "e");//вывод вектора на экран
 	}
 
 	public void create_b(){//создание сообщения, которое принимает декодер
 		for(int i = 0; i < b.length; i++){
 			b[i] = (a[i] + e[i]) % 2;
 		}
-		print_array(b, "b");
+		print_array(b, "b");//вывод вектора на экран
 	}
 
 	public void sindrom(){//вычисление синдрома
