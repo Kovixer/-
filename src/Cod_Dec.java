@@ -220,19 +220,22 @@ public class Cod_Dec{
 	}
 
 	public double exact_value(ArrayList<int[]> list, double p_bit){//вычисление точного значения ошибки
-		int []array = new int[n];
+		int []array = new int[n + 1];
 		int count = 0;
 		double sum = 0;
-		for(int i = 0; i < array.length; i++){
+		for(int i = 0; i < list.size(); i++){
 			count = code_word_weight(list.get(i));
-			for(int j = 0; j < n; j++){
+			for(int j = 0; j <= n; j++){
 				if(count == j){
 					array[j]++;
 					break;
 				}
 			}
 		}
-		for(int i = d; i < n; i++){
+		for(int i = 0; i < array.length; i++){
+			System.out.println(array[i]);
+		}
+		for(int i = d; i <= n; i++){
 			sum += (double)(array[i] * Math.pow(p_bit, i) * Math.pow((1 - p_bit), (n - i)));
 		}
 		System.out.println("Pe = " + sum);
